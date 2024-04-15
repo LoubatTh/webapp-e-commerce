@@ -30,8 +30,8 @@ jobs:
           node-version: "20"
           
       # switch to frontend directory
-      - name: Change to the frontend directory
-        run: cd frontend
+      - name: LS command
+        run: ls
 
       # Installs dependencies
       - name: Install dependencies
