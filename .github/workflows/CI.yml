@@ -32,6 +32,7 @@ jobs:
       # switch to frontend directory
       - name: Frontend
         run: cd frontend
+            ls
 
       # Installs dependencies
       - name: Install dependencies
