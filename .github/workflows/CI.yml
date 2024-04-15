@@ -28,6 +28,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "20"
+          
+      # switch to frontend directory
+      - name: Change to the frontend directory
+        run: cd frontend
 
       # Installs dependencies
       - name: Install dependencies
