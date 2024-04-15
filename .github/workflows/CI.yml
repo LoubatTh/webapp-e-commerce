@@ -32,8 +32,10 @@ jobs:
       # switch to frontend directory
       - name: Frontend
         run: cd frontend
-            ls
 
+      - name: LS
+        run: ls
+        
       # Installs dependencies
       - name: Install dependencies
         run: npm install
