@@ -1,0 +1,38 @@
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push events for any branch
+  push:
+  
+  # Triggers the workflow on pull request events but only for the "main" branch
+  pull_request:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  # This workflow contains a single job called "test"
+  test:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+
+      # Sets up a specific version of Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "^20.12.7"
+
+      # Installs dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Runs npm test
+      - name: Run tests
+        run: npm run test
