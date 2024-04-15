@@ -28,18 +28,13 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "20"
-          
-      # switch to frontend directory
-      - name: Frontend
-        run: cd frontend
-
-      - name: LS
-        run: ls
         
       # Installs dependencies
       - name: Install dependencies
         run: npm install
+        working-directory: frontend
 
       # Runs npm test
       - name: Run tests
         run: npm run test
+        working-directory: frontend
