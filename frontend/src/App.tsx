@@ -1,13 +1,13 @@
-import { Button } from "./components/ui/button";
+import { Routes, Route, MemoryRouter } from "react-router";
+import Homepage from "./pages/Homepage";
 
 function App() {
   return (
-    <>
-      <h1>Hello</h1>
-      <div>
-        <Button>Click me</Button>
-      </div>
-    </>
+    <MemoryRouter basename="/">
+      <Routes>
+        <Route path="/" element={<Homepage />} />
+      </Routes>
+    </MemoryRouter>
   );
 }
 
