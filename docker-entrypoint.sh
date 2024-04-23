@@ -1,4 +1,4 @@
-#!/usr/bin/env bashsrc/app
+#!/usr/bin/env bash
 
 if [[ "$1" == apache2* ]] || [ "$1" = 'php-fpm' ]; then
     echo "INSTALLING DEPENDENCIES with composer install"
