@@ -3,6 +3,8 @@ services:
     container_name: adminer
     image: adminer
     restart: on-failure
+    environment:
+      - ADMINER_DESIGN=pepa-linha
     ports:
       - "8081:8080"
     depends_on:
