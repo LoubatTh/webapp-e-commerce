@@ -1,19 +1,26 @@
-FROM node:alpine AS vite-builder
+FROM node:20-alpine
 
 WORKDIR /app
-
-COPY package.json .
-
-RUN npm install
-
 COPY . .
+RUN npm install
+EXPOSE 3000
+CMD ["npm", "run", "dev"]
+# FROM node:alpine AS vite-builder
 
-RUN npm run build
+# WORKDIR /app
 
-FROM httpd:alpine
+# COPY package.json .
 
-COPY --from=vite-builder /app/dist /usr/local/apache2/htdocs
+# RUN npm install
 
-EXPOSE 80
+# COPY . .
 
-CMD ["httpd-foreground"]
+# RUN npm run build
+
+# FROM httpd:alpine
+
+# COPY --from=vite-builder /app/dist /usr/local/apache2/htdocs
+
+# EXPOSE 80
+
+# CMD ["httpd-foreground"]
