@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,8 +20,14 @@ class AuthController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         if (!isset($data['username']) || !isset($data['password'])) {
-            return $this->json([
-                "error" => "Missing mandatory data to register user.",
+            return new JsonResponse([
+                "error" => "Missing username or password to register user.",
+            ], 400);
+        }
+
+        if ($entityManager->getRepository(User::class)->findOneBy(['username' => $data['username']])) {
+            return new JsonResponse([
+                "error" => "Username already taken."
             ], 400);
         }
 
@@ -32,9 +39,6 @@ class AuthController extends AbstractController
         $entityManager->persist($user);
         $entityManager->flush();
 
-        return new JsonResponse(['token' => $JWTManager->create($user)]);
-        // $authSuccessHandler = $this->container->get('lexik_jwt_authentication.handler.authentication_success');
-
-        // return $authSuccessHandler->handleAuthenticationSuccess($user);
+        return new JsonResponse(['token' => $JWTManager->create($user)], 201);
     }
 }
