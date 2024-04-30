@@ -2,6 +2,7 @@ FROM php:8.2-apache
 
 RUN apt update && apt install -y \
     libicu-dev \
+    libpq-dev \
     libonig-dev \
     libzip-dev \
     zip \
@@ -13,7 +14,8 @@ RUN apt update && apt install -y \
     && docker-php-ext-install intl \
     && docker-php-ext-install mbstring \
     && docker-php-ext-install zip \
-    && docker-php-ext-install pdo_pgsql 
+    && docker-php-ext-install pdo_pgsql
+    
 RUN docker-php-ext-enable intl mbstring zip pdo_pgsql
 
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
@@ -26,6 +28,7 @@ WORKDIR /usr/src
 VOLUME /usr/src
 
 COPY ./app /usr/src
+RUN chmod -R 755 /usr/src/var
 COPY ./docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
