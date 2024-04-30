@@ -8,16 +8,16 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import NavbarLayout from "./pages/NavbarLayout";
-import HomePage from "./pages/HomePage";
 import ProfilePage from "./pages/ProfilePage";
 import Cartpage from "./pages/CartPage";
 import LoginPage from "./pages/LoginPage";
+import Homepage from "./pages/Homepage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
       <Route path="/" element={<NavbarLayout />}>
-        <Route path="" element={<HomePage />} />
+        <Route path="" element={<Homepage />} />
         <Route path="profile" element={<ProfilePage />} />
         <Route path="cart" element={<Cartpage />} />
       </Route>
