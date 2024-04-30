@@ -1,4 +1,5 @@
 FROM php:8.2-apache
+
 RUN apt update && apt install -y \
     libicu-dev \
     libonig-dev \
@@ -7,12 +8,13 @@ RUN apt update && apt install -y \
     unzip \
     curl \
     git \
+    libpq-dev \
     && docker-php-ext-configure intl \
     && docker-php-ext-install intl \
     && docker-php-ext-install mbstring \
     && docker-php-ext-install zip \
-    && docker-php-ext-install pdo_mysql
-RUN docker-php-ext-enable intl mbstring zip pdo_mysql
+    && docker-php-ext-install pdo_pgsql 
+RUN docker-php-ext-enable intl mbstring zip pdo_pgsql
 
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 ENV COMPOSER_ALLOW_SUPERUSER=1
