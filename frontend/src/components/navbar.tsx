@@ -51,7 +51,7 @@ const navbar = () => {
   ];
   return (
     <>
-      <div className="flex justify-between">
+      <div className="flex justify-between border border-l-shadow shadow-sm">
         <div>
           <NavigationMenu>
             <NavigationMenuList>
@@ -80,7 +80,10 @@ const navbar = () => {
                 </NavigationMenuContent>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <Input placeholder="Search" className="h-full hover:none" />
+                <Input
+                  placeholder="Search"
+                  className="h-full focus-visible:ring-0 focus-visible:ring-transparent rounded-xl"
+                />
               </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
