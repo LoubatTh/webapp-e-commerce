@@ -19,9 +19,9 @@ class AuthController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        if (!isset($data['username']) || !isset($data['password'])) {
+        if (!isset($data['username']) || !isset($data['password']) || !isset($data['email']) || !isset($data['firstname']) || !isset($data['lastname'])) {
             return new JsonResponse([
-                "error" => "Missing username or password to register user.",
+                "error" => "Missing field. Expected fields: username, password, email, firstname, lastname",
             ], 400);
         }
 
@@ -31,10 +31,23 @@ class AuthController extends AbstractController
             ], 400);
         }
 
+        if ($entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']])) {
+            return new JsonResponse([
+                "error" => "Email already used."
+            ], 400);
+        }
+
         $user = new User();
         $user->setUsername($data['username']);
         $user->setPassword($passwordHasher->hashPassword($user, $data['password']));
+        $user->setEmail($data['email']);
+        $user->setFirstname($data['firstname']);
+        $user->setLastname($data['lastname']);
         $user->setRoles(["ROLE_USER"]);
+
+        if(isset($data['address'])){
+            $user->setAddress($data['address']);
+        }
 
         $entityManager->persist($user);
         $entityManager->flush();
