@@ -29,3 +29,9 @@ schema: ## Create db schema
 
 drop-schema: ## Drop db schema
 	docker exec -it backend php bin/console doctrine:schema:drop --force;
+
+test: ## Run tests
+	docker stop test-db && \
+	docker rm test-db && \
+	docker run -p 5433:5432 --name=test-db --network=t-web-600_network -e POSTGRES_USER=test -e POSTGRES_PASSWORD=test -e POSTGRES_DB=test --detach postgres:16.2-alpine && \
+	docker exec -it backend php bin/phpunit;

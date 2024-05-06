@@ -42,3 +42,11 @@ prerequisites:
 composer install
 symfony server:start
 ```
+
+## Tests
+
+### Backend
+
+```bash
+php bin/phpunit
+```
