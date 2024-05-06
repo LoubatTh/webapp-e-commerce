@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
+import { z } from "zod";
 import {
   Form,
   FormControl,
@@ -12,28 +12,29 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-const passwordRegex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*\W)/;
+const login = async (username: string, password: string) => {
+  const response = await fetch("/api/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ username, password }),
+  });
+
+  if (!response.ok) {
+    throw new Error("An error occured");
+  }
+
+  return response.json();
+};
+
 const loginSchema = z.object({
-  username: z
-    .string()
-    .min(2, {
-      message: "Username is too short",
-    })
-    .max(50, {
-      message: "Username is too long",
-    }),
-  password: z
-    .string()
-    .min(8, {
-      message: "Password is too short",
-    })
-    .max(50, {
-      message: "Password is too long",
-    })
-    .regex(passwordRegex, {
-      message:
-        "Password must contain at least one uppercase letter, one number, and one special character",
-    }),
+  username: z.string().min(1, {
+    message: "Username is required",
+  }),
+  password: z.string().min(1, {
+    message: "Password is required",
+  }),
 });
 
 const LoginForm = () => {
@@ -46,7 +47,7 @@ const LoginForm = () => {
   });
 
   function onSubmit(values: z.infer<typeof loginSchema>) {
-    console.log(values);
+    login(values.username, values.password);
   }
 
   return (
@@ -75,13 +76,13 @@ const LoginForm = () => {
             <FormItem>
               <FormLabel>Passsword</FormLabel>
               <FormControl>
-                <Input placeholder="password" {...field} />
+                <Input placeholder="password" {...field} type="password" />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button type="submit">Connect</Button>
       </form>
     </Form>
   );
