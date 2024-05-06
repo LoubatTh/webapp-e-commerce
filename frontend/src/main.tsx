@@ -8,10 +8,10 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import NavbarLayout from "./pages/NavbarLayout";
-import HomePage from "./pages/HomePage";
 import ProfilePage from "./pages/ProfilePage";
 import Cartpage from "./pages/CartPage";
 import LoginPage from "./pages/LoginPage";
+import HomePage from "./pages/Homepage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
