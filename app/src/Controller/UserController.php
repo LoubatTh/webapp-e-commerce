@@ -29,8 +29,20 @@ class UserController extends AbstractController
             "email" => $user->getEmail(),
             "firstname" => $user->getFirstname(),
             "lastname" => $user->getLastname(),
-            "address" => $user->getAddress(),
+            "address" => [],
         ];
+
+        foreach ($user->getAddress() as $address) {
+            $response["address"][] = [
+                "id" => $address->getId(),
+                "postalCode" => $address->getPostalCode(),
+                "country" => $address->getCountry(),
+                "city" => $address->getCity(),
+                "address" => $address->getAddress(),
+                "name" => $address->getName(),
+                "additionnalAddress" => $address->getAdditionnalAddress(),
+            ];
+        }
 
         return new JsonResponse($response);
     }
@@ -59,10 +71,9 @@ class UserController extends AbstractController
                 "error" => "Email already used."
             ], 400);
         }
-        $data["email"] ? $user->setEmail($data["email"]) : null;
-        $data["firstname"] ? $user->setFirstname($data["firstname"]) : null;
-        $data["lastname"] ? $user->setLastname($data["lastname"]) : null;
-        $data["address"] ? $user->setAddress($data["address"]) : null;
+        isset($data["email"]) ? $user->setEmail($data["email"]) : null;
+        isset($data["firstname"]) ? $user->setFirstname($data["firstname"]) : null;
+        isset($data["lastname"]) ? $user->setLastname($data["lastname"]) : null;
         $entityManager->persist($user);
 
         $response = [
@@ -72,8 +83,20 @@ class UserController extends AbstractController
             "email" => $user->getEmail(),
             "firstname" => $user->getFirstname(),
             "lastname" => $user->getLastname(),
-            "address" => $user->getAddress(),
+            "address" => [],
         ];
+
+        foreach ($user->getAddress() as $address) {
+            $response["address"][] = [
+                "id" => $address->getId(),
+                "postalCode" => $address->getPostalCode(),
+                "country" => $address->getCountry(),
+                "city" => $address->getCity(),
+                "address" => $address->getAddress(),
+                "name" => $address->getName(),
+                "additionnalAddress" => $address->getAdditionnalAddress(),
+            ];
+        }
 
         return new JsonResponse($response);
     }

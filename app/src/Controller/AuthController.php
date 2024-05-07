@@ -50,10 +50,6 @@ class AuthController extends AbstractController
         $user->setLastname($data['lastname']);
         $user->setRoles(["ROLE_USER"]);
 
-        if (isset($data['address'])) {
-            $user->setAddress($data['address']);
-        }
-
         $entityManager->persist($user);
         $entityManager->flush();
 

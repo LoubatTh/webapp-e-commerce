@@ -11,7 +11,6 @@ class TestFixtures extends Fixture
     {
         // $product = new Product();
         // $manager->persist($product);
-        $user = new User();
 
         $manager->flush();
     }
