@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
+import { z } from "zod";
 import {
   Form,
   FormControl,
@@ -11,32 +11,32 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { fetchApi } from "@/lib/api";
+import Cookies from "js-cookie";
+import { loginSchema } from "@/lib/form-validator/loginSchema";
+import { UserLoginData } from "@/types/UserLogin";
+import { useNavigate } from "react-router-dom";
 
-const passwordRegex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*\W)/;
-const loginSchema = z.object({
-  username: z
-    .string()
-    .min(2, {
-      message: "Username is too short",
-    })
-    .max(50, {
-      message: "Username is too long",
-    }),
-  password: z
-    .string()
-    .min(8, {
-      message: "Password is too short",
-    })
-    .max(50, {
-      message: "Password is too long",
-    })
-    .regex(passwordRegex, {
-      message:
-        "Password must contain at least one uppercase letter, one number, and one special character",
-    }),
-});
+const login = async (username: string, password: string): Promise<unknown> => {
+  const response = await fetchApi<UserLoginData>("POST", "login", {
+    username,
+    password,
+  });
+
+  if (response.status !== 200) {
+    console.log(response.error);
+    throw new Error("An error occured");
+  }
+
+  const data = response.data;
+  const token = data.token;
+  Cookies.set("authToken", token);
+  return true;
+};
 
 const LoginForm = () => {
+  const navigate = useNavigate();
+
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -45,8 +45,11 @@ const LoginForm = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof loginSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof loginSchema>) {
+    const ok = await login(values.username, values.password);
+    if (ok) {
+      navigate("/");
+    }
   }
 
   return (
@@ -75,13 +78,13 @@ const LoginForm = () => {
             <FormItem>
               <FormLabel>Passsword</FormLabel>
               <FormControl>
-                <Input placeholder="password" {...field} />
+                <Input placeholder="password" {...field} type="password" />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button type="submit">Connect</Button>
       </form>
     </Form>
   );
