@@ -5,3 +5,7 @@ export type UserRegistrationData = {
   firstname: string;
   lastname: string;
 };
+
+export type UserRegistrationResponse = {
+  token: string;
+};

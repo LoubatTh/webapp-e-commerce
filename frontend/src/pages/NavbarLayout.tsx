@@ -4,7 +4,9 @@ import { Outlet } from "react-router";
 const NavbarLayout = () => {
   return (
     <>
-      <Navbar />
+      <div className="h-10">
+        <Navbar />
+      </div>
       <Outlet />
     </>
   );

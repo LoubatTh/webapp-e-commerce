@@ -7,6 +7,8 @@ const ProfilePage = () => {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  const actualUrl = window.location.href;
+
   const LogOut = () => {
     Cookies.remove("authToken");
     setIsLoggedIn(false);
@@ -17,7 +19,7 @@ const ProfilePage = () => {
     const token = Cookies.get("authToken");
     const userIsLoggedIn = !!token;
     setIsLoggedIn(userIsLoggedIn);
-  }, []);
+  }, [actualUrl]);
 
   if (isLoggedIn) {
     return (

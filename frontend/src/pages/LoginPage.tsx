@@ -1,12 +1,20 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import LoginForm from "@/components/login/loginForm";
 import RegisterForm from "@/components/login/registerForm";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="h-screen flex flex-col justify-between items-center">
       <div className="h-2/5">
-        <img src="/logo.png" alt="Companie logo" className="h-full" />
+        <img
+          src="/logo.png"
+          alt="Companie logo"
+          className="h-full cursor-pointer"
+          onClick={() => navigate("/")}
+        />
       </div>
       <div className="h-3/5">
         <Tabs defaultValue="connect" className="w-[800px]">

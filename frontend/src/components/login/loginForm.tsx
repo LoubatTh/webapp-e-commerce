@@ -14,8 +14,8 @@ import { Input } from "@/components/ui/input";
 import { fetchApi } from "@/lib/api";
 import Cookies from "js-cookie";
 import { loginSchema } from "@/lib/form-validator/loginSchema";
-import { UserLoginData } from "@/types/UserLogin";
 import { useNavigate } from "react-router-dom";
+import type { UserLoginData, UserLoginResponse } from "@/types/userLogin.type";
 
 const login = async (username: string, password: string): Promise<unknown> => {
   const response = await fetchApi<UserLoginData>("POST", "login", {
@@ -28,7 +28,7 @@ const login = async (username: string, password: string): Promise<unknown> => {
     throw new Error("An error occured");
   }
 
-  const data = response.data;
+  const data = response.data as UserLoginResponse;
   const token = data.token;
   Cookies.set("authToken", token);
   return true;

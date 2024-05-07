@@ -13,9 +13,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { registerSchema } from "@/lib/form-validator/registerSchema";
 import { fetchApi } from "@/lib/api";
-import { UserRegistrationData } from "@/types/UserRegistration";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
+import type {
+  UserRegistrationData,
+  UserRegistrationResponse,
+} from "@/types/userRegistration.type";
 
 const register = async (
   username: string,
@@ -37,7 +40,7 @@ const register = async (
     throw new Error("An error occured");
   }
 
-  const data = response.data;
+  const data = response.data as UserRegistrationResponse;
   const token = data.token;
   Cookies.set("authToken", token);
   return true;
