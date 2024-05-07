@@ -11,33 +11,32 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { fetchApi } from "@/lib/api";
+import Cookies from "js-cookie";
+import { loginSchema } from "@/lib/form-validator/loginSchema";
+import { UserLoginData } from "@/types/UserLogin";
+import { useNavigate } from "react-router-dom";
 
-const login = async (username: string, password: string) => {
-  const response = await fetch("/api/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ username, password }),
+const login = async (username: string, password: string): Promise<unknown> => {
+  const response = await fetchApi<UserLoginData>("POST", "login", {
+    username,
+    password,
   });
 
-  if (!response.ok) {
+  if (response.status !== 200) {
+    console.log(response.error);
     throw new Error("An error occured");
   }
 
-  return response.json();
+  const data = response.data;
+  const token = data.token;
+  Cookies.set("authToken", token);
+  return true;
 };
 
-const loginSchema = z.object({
-  username: z.string().min(1, {
-    message: "Username is required",
-  }),
-  password: z.string().min(1, {
-    message: "Password is required",
-  }),
-});
-
 const LoginForm = () => {
+  const navigate = useNavigate();
+
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -46,8 +45,11 @@ const LoginForm = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof loginSchema>) {
-    login(values.username, values.password);
+  async function onSubmit(values: z.infer<typeof loginSchema>) {
+    const ok = await login(values.username, values.password);
+    if (ok) {
+      navigate("/");
+    }
   }
 
   return (

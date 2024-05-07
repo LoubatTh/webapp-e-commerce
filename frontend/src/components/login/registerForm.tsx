@@ -11,6 +11,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { registerSchema } from "@/lib/form-validator/registerSchema";
+import { fetchApi } from "@/lib/api";
+import { UserRegistrationData } from "@/types/UserRegistration";
+import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
 
 const register = async (
   username: string,
@@ -18,59 +23,29 @@ const register = async (
   email: string,
   firstname: string,
   lastname: string
-) => {
-  const response = await fetch("/api/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ username, password, email, firstname, lastname }),
+): Promise<unknown> => {
+  const response = await fetchApi<UserRegistrationData>("POST", "register", {
+    username,
+    password,
+    email,
+    firstname,
+    lastname,
   });
 
-  if (!response.ok) {
+  if (response.status !== 201) {
+    console.log(response.error);
     throw new Error("An error occured");
   }
 
-  return response.json();
+  const data = response.data;
+  const token = data.token;
+  Cookies.set("authToken", token);
+  return true;
 };
 
-const passwordRegex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*\W)/;
-const registerSchema = z.object({
-  username: z
-    .string()
-    .min(2, {
-      message: "Username is too short",
-    })
-    .max(50, {
-      message: "Username is too long",
-    })
-    .nonempty({
-      message: "Username is required",
-    }),
-  password: z
-    .string()
-    .min(8, {
-      message: "Password is too short",
-    })
-    .max(50, {
-      message: "Password is too long",
-    })
-    .regex(passwordRegex, {
-      message:
-        "Password must contain at least one uppercase letter, one number, and one special character",
-    }),
-  email: z.string().email({
-    message: "Invalid email",
-  }),
-  firstname: z.string().min(1, {
-    message: "Firstname is required",
-  }),
-  lastname: z.string().min(1, {
-    message: "Lastname is required",
-  }),
-});
-
 const RegisterForm = () => {
+  const navigate = useNavigate();
+
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -82,14 +57,17 @@ const RegisterForm = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof registerSchema>) {
-    register(
+  async function onSubmit(values: z.infer<typeof registerSchema>) {
+    const ok = await register(
       values.username,
       values.password,
       values.email,
       values.firstname,
       values.lastname
     );
+    if (ok) {
+      navigate("/");
+    }
   }
 
   return (

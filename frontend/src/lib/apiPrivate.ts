@@ -1,9 +1,19 @@
-export async function fetchApi<T>(
+import Cookies from "js-cookie";
+
+export async function fetchApiPrivate<T>(
   method: "GET" | "POST" | "PUT" | "DELETE",
   endpoint: string,
   body?: T
 ): Promise<{ data?: unknown; status: number; error?: string }> {
+  const token = Cookies.get("authToken");
+
+  if (!token) {
+    console.error("No auth token available");
+    return { status: 401, error: "Authentication required" };
+  }
+
   const headers = new Headers({
+    Authorization: `Bearer ${token}`,
     "Content-Type": "application/json",
   });
 

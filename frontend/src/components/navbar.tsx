@@ -9,46 +9,55 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import Cookies from "js-cookie";
 
-const navbar = () => {
-  const components: { title: string; href: string; description: string }[] = [
-    {
-      title: "Tshirt",
-      href: "/components/button",
-      description: "All summer tshirt",
-    },
-    {
-      title: "Sweater",
-      href: "/components/input",
-      description: "All winter sweater",
-    },
-    {
-      title: "Jean",
-      href: "/components/navigation-menu",
-      description: "Our jean collection",
-    },
-    {
-      title: "Short",
-      href: "/components/navigation-menu",
-      description: "Our beach short",
-    },
-    {
-      title: "Cargo",
-      href: "/components/navigation-menu",
-      description: "Our developer cargo",
-    },
-    {
-      title: "Suit",
-      href: "/components/navigation-menu",
-      description: "Our business suit",
-    },
-    {
-      title: "Jacket",
-      href: "/components/navigation-menu",
-      description: "Our casual jacket",
-    },
-  ];
+const components: { title: string; href: string; description: string }[] = [
+  {
+    title: "Tshirt",
+    href: "/components/button",
+    description: "All summer tshirt",
+  },
+  {
+    title: "Sweater",
+    href: "/components/input",
+    description: "All winter sweater",
+  },
+  {
+    title: "Jean",
+    href: "/components/navigation-menu",
+    description: "Our jean collection",
+  },
+  {
+    title: "Short",
+    href: "/components/navigation-menu",
+    description: "Our beach short",
+  },
+  {
+    title: "Cargo",
+    href: "/components/navigation-menu",
+    description: "Our developer cargo",
+  },
+  {
+    title: "Suit",
+    href: "/components/navigation-menu",
+    description: "Our business suit",
+  },
+  {
+    title: "Jacket",
+    href: "/components/navigation-menu",
+    description: "Our casual jacket",
+  },
+];
+
+const Navbar = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const token = Cookies.get("authToken");
+    setIsLoggedIn(!!token);
+  }, []);
+
   return (
     <>
       <div className="flex justify-between border border-l-shadow shadow-sm">
@@ -91,14 +100,25 @@ const navbar = () => {
         <div>
           <NavigationMenu>
             <NavigationMenuList>
-              <NavigationMenuItem>
-                <NavigationMenuLink
-                  className={navigationMenuTriggerStyle()}
-                  href="/profile"
-                >
-                  Profile
-                </NavigationMenuLink>
-              </NavigationMenuItem>
+              {isLoggedIn ? (
+                <NavigationMenuItem>
+                  <NavigationMenuLink
+                    className={navigationMenuTriggerStyle()}
+                    href="/profile"
+                  >
+                    Profile
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+              ) : (
+                <NavigationMenuItem>
+                  <NavigationMenuLink
+                    className={navigationMenuTriggerStyle()}
+                    href="/login"
+                  >
+                    Login
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+              )}
               <NavigationMenuItem>
                 <NavigationMenuLink
                   className={navigationMenuTriggerStyle()}
@@ -141,4 +161,4 @@ const ListItem = React.forwardRef<
 });
 ListItem.displayName = "ListItem";
 
-export default navbar;
+export default Navbar;
