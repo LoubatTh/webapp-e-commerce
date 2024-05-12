@@ -11,7 +11,7 @@ import NavbarLayout from "./pages/NavbarLayout";
 import ProfilePage from "./pages/ProfilePage";
 import Cartpage from "./pages/CartPage";
 import LoginPage from "./pages/LoginPage";
-import Homepage from "./pages/Homepage";
+import HomePage from "./pages/Homepage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(

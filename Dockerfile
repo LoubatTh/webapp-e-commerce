@@ -26,7 +26,6 @@ WORKDIR /usr/src
 VOLUME /usr/src
 
 COPY ./app /usr/src
-RUN chmod -R 755 /usr/src/var
 COPY ./docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
