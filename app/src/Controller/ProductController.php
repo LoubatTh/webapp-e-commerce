@@ -28,21 +28,26 @@ class ProductController extends AbstractController
     public function getProducts(Request $request): JsonResponse
     {
         $products = $this->entityManager->getRepository(Product::class)->findAll();
+        $response = [];
 
-        return new JsonResponse($products);
+        foreach ($products as $product) {
+            $response[] = $this->responseBuilder($product);
+        }
+
+        return new JsonResponse($response);
     }
 
     #[Route('/api/products/{id}', methods: ['GET'])]
     public function getAllProducts(Request $request, int $id): JsonResponse
     {
 
-        $products = $this->entityManager->getRepository(Product::class)->findBy(["id" => $id]);
+        $product = $this->entityManager->getRepository(Product::class)->findOneBy(["id" => $id]);
 
-        if (count($products) === 0) {
+        if (!$product) {
             return new JsonResponse(["error" => "Product not found"], 404);
         }
 
-        return new JsonResponse($products);
+        return new JsonResponse($this->responseBuilder($product));
     }
 
     #[Route('/api/products', methods: ['POST'])]
@@ -63,10 +68,11 @@ class ProductController extends AbstractController
         try {
             $product->setType($this->checkType($data["type"]));
             foreach ($data["size"] as $size) {
-                $product->addSize($size);
+                $product->addSize($this->checkSize($size));
             }
-            $product->setGender($data["gender"]);
-            $product->setColor($data["color"]);
+            $product->setGender($this->checkGender($data["gender"]));
+            $product->setColor($this->checkColor($data["color"]));
+            $product->setBrand($this->checkBrand($data["brand"]));
         } catch (\Exception $e) {
             return new JsonResponse(["error" => $e->getMessage()], $e->getCode() ?? 500);
         }
@@ -75,46 +81,150 @@ class ProductController extends AbstractController
         $this->entityManager->persist($product);
         $this->entityManager->flush();
 
-        $response = [
-            "name" => $product->getName(),
-            "photo" => $product->getPhoto(),
-            "price" => $product->getPrice(),
-            "type" => $product->getType(),
-            "size" => $product->getSize(),
-            "gender" => $product->getGender(),
-            "color" => $product->getColor(),
-            "description" => $product->getDescription(),
-        ];
-
-        return new JsonResponse($response, 201);
+        return new JsonResponse($this->responseBuilder($product), 201);
     }
 
     #[Route('/api/products/{id}', methods: ['PUT'])]
-    public function updateProduct(): JsonResponse
+    public function updateProduct(Request $request, int $id): JsonResponse
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        $data = json_decode($request->getContent(), true);
+        $product = $this->entityManager->getRepository(Product::class)->findOneBy(['id' => $id]);
+
+        if (!$product) {
+            return new JsonResponse(['error' => 'Product not found'], 404);
+        }
+
+        if (!isset($data["name"]) && !isset($data["photo"]) && !isset($data["price"]) && !isset($data["type"]) && !isset($data["size"]) && count($data["size"]) == 0 && !isset($data["gender"]) && !isset($data["color"]) && !isset($data["brand"])) {
+            return new JsonResponse(["error" => "Missing fields. Mandatory fields: name, phot, price, type, size, gender, color, brand"], 400);
+        }
+
+        $product = new Product();
+        isset($data["name"]) ? $product->setName($data["name"]) : null;
+        isset($data["price"]) ? $product->setPrice($data["price"]) : null;
+        isset($data["photo"]) ? $product->setPhoto($data["photo"]) : null;
+        try {
+            isset($data["type"]) ? $product->setType($this->checkType($data["type"])) : null;
+            if (isset($data["size"])) {
+                foreach ($data["size"] as $size) {
+                    $product->addSize($this->checkSize($size));
+                }
+            }
+            isset($data["gender"]) ? $product->setGender($this->checkGender($data["gender"])) : null;
+            isset($data["color"]) ? $product->setColor($this->checkColor($data["color"])) : null;
+            isset($data["brand"]) ? $product->setBrand($this->checkBrand($data["brand"])) : null;
+        } catch (\Exception $e) {
+            return new JsonResponse(["error" => $e->getMessage()], $e->getCode() ?? 500);
+        }
+        isset($data["description"]) ? $product->setDescription($data["description"]) : null;
+
+        $this->entityManager->persist($product);
+        $this->entityManager->flush();
 
         return new JsonResponse(['error' => 'Not implemented'], 501);
     }
 
     #[Route('/api/products/{id}', methods: ['DELETE'])]
-    public function deleteProduct(): JsonResponse
+    public function deleteProduct(Request $request, int $id): JsonResponse
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $product = $this->entityManager->getRepository(Product::class)->findOneBy(['id' => $id]);
 
-        return new JsonResponse(['error' => 'Not implemented'], 501);
+        if (!$product) {
+            return new JsonResponse(['error' => 'Product not found'], 404);
+        }
+
+        $this->entityManager->remove($product);
+        $this->entityManager->flush();
+
+        return new JsonResponse(['message' => 'Product deleted successfully']);
     }
 
     private function checkType(string $type): Type
     {
         $availabletypes = $this->entityManager->getRepository(Type::class)->findAll();
 
-        $key = array_search($type, $availabletypes);
-
-        if (!$key) {
-            throw new EntityNotFoundException($type . ' is not a valid Type', 401);
+        foreach ($availabletypes as $availabletype) {
+            if ($availabletype->getType() === $type) {
+                return $availabletype;
+            }
         }
 
-        return $availabletypes[$key];
+        throw new EntityNotFoundException($type . ' is not a valid Type', 401);
+    }
+
+    private function checkSize(string $size): Size
+    {
+        $availableSizes = $this->entityManager->getRepository(Size::class)->findAll();
+
+        foreach ($availableSizes as $availableSize) {
+            if ($availableSize->getSize() === $size) {
+                return $availableSize;
+            }
+        }
+
+        throw new EntityNotFoundException($size . ' is not a valid Size', 0);
+    }
+
+    private function checkGender(string $gender): Gender
+    {
+        $availableGenders = $this->entityManager->getRepository(Gender::class)->findAll();
+
+        foreach ($availableGenders as $availableGender) {
+            if ($availableGender->getGender() === $gender) {
+                return $availableGender;
+            }
+        }
+
+        throw new EntityNotFoundException($gender . ' is not a valid Gender', 0);
+    }
+
+    private function checkColor(string $color): Color
+    {
+        $availableColors = $this->entityManager->getRepository(Color::class)->findAll();
+
+        foreach ($availableColors as $availableColor) {
+            if ($availableColor->getColor() === $color) {
+                return $availableColor;
+            }
+        }
+
+        throw new EntityNotFoundException($color . ' is not a valid Color', 0);
+    }
+
+    private function checkBrand(string $brand): Brand
+    {
+        $availableBrands = $this->entityManager->getRepository(Brand::class)->findAll();
+
+        foreach ($availableBrands as $availableBrand) {
+            if ($availableBrand->getName() === $brand) {
+                return $availableBrand;
+            }
+        }
+
+        throw new EntityNotFoundException($brand . ' is not a valid Brand', 0);
+    }
+
+    private function responseBuilder(Product $product): array
+    {
+        $response = [
+            "id" => $product->getId(),
+            "name" => $product->getName(),
+            "photo" => $product->getPhoto(),
+            "price" => $product->getPrice(),
+            "type" => $product->getType()->getType(),
+            "gender" => $product->getGender()->getGender(),
+            "color" => $product->getColor()->getColor(),
+            "brand" => $product->getBrand()->getName(),
+            "description" => $product->getDescription(),
+        ];
+
+        $sizes = $product->getSize();
+        foreach ($sizes as $size) {
+            $response["size"][] = $size->getSize();
+        }
+
+        return $response;
     }
 }
