@@ -6,6 +6,7 @@ use App\Entity\Brand;
 use App\Entity\Gender;
 use App\Entity\Size;
 use App\Entity\Type;
+use App\Entity\Color;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
@@ -19,11 +20,14 @@ class AppFixtures extends Fixture
         $genders = array("Men", "Women", "Kid");
         $this->createGenders($manager, $genders);
 
-        $size = array("XS", "S", "M", "L", "XL", "XXL", "XXXL", "∞L");
-        $this->createSize($manager, $size);
+        $sizes = array("XS", "S", "M", "L", "XL", "XXL", "XXXL", "∞L");
+        $this->createSize($manager, $sizes);
 
-        $type = array("Shirt", "Sweat", "Short", "Pants", "Shoes");
-        $this->createType($manager, $type);
+        $types = array("Shirt", "Sweat", "Short", "Pants", "Shoes");
+        $this->createType($manager, $types);
+
+        $colors = array("Black", "Grey", "White", "Blue", "Yellow", "Orange", "Cyan", "Green", "Red");
+        $this->createColor($manager, $colors);
 
         $manager->flush();
     }
@@ -61,6 +65,15 @@ class AppFixtures extends Fixture
             $type = new Type();
             $type->setType($typeName);
             $manager->persist($type);
+        }
+    }
+
+    private function createColor(ObjectManager $manager, array $colors): void
+    {
+        foreach ($colors as $colorName) {
+            $color = new Color();
+            $color->setColor($colorName);
+            $manager->persist($color);
         }
     }
 }
