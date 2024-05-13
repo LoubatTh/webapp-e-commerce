@@ -12,6 +12,7 @@ For this project we had to create a e-commerce website using Symfony, React, Pos
 
 ```bash
 docker compose up --build
+make init
 ```
 
 If you want to run the app without Docker follow this steps:
@@ -41,4 +42,12 @@ prerequisites:
 ```bash
 composer install
 symfony server:start
+```
+
+## Tests
+
+### Backend
+
+```bash
+php bin/phpunit
 ```

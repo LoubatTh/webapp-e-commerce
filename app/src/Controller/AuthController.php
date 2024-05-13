@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -37,6 +36,12 @@ class AuthController extends AbstractController
             ], 400);
         }
 
+        if (!$this->checkPassword($data["password"])) {
+            return new JsonResponse([
+                "error" => "Your password must have at least 8 characters, 1 lowercase, 1 uppercase and 1 number"
+            ], 400);
+        }
+
         $user = new User();
         $user->setUsername($data['username']);
         $user->setPassword($passwordHasher->hashPassword($user, $data['password']));
@@ -45,13 +50,16 @@ class AuthController extends AbstractController
         $user->setLastname($data['lastname']);
         $user->setRoles(["ROLE_USER"]);
 
-        if(isset($data['address'])){
-            $user->setAddress($data['address']);
-        }
-
         $entityManager->persist($user);
         $entityManager->flush();
 
         return new JsonResponse(['token' => $JWTManager->create($user)], 201);
+    }
+
+    public function checkPassword(string $password): bool
+    {
+        $pattern = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/";
+
+        return preg_match($pattern, $password) ? true : false;
     }
 }
