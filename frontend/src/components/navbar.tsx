@@ -103,6 +103,14 @@ const Navbar = () => {
         <div>
           <NavigationMenu>
             <NavigationMenuList>
+              <NavigationMenuItem>
+                <NavigationMenuLink
+                  className={navigationMenuTriggerStyle()}
+                  href="/admin"
+                >
+                  Admin
+                </NavigationMenuLink>
+              </NavigationMenuItem>
               {isLoggedIn ? (
                 <NavigationMenuItem>
                   <NavigationMenuLink
@@ -122,14 +130,6 @@ const Navbar = () => {
                   </NavigationMenuLink>
                 </NavigationMenuItem>
               )}
-              <NavigationMenuItem>
-                <NavigationMenuLink
-                  className={navigationMenuTriggerStyle()}
-                  href="/cart"
-                >
-                  Cart
-                </NavigationMenuLink>
-              </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
         </div>

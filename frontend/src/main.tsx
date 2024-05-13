@@ -13,12 +13,14 @@ import Cartpage from "./pages/CartPage";
 import LoginPage from "./pages/LoginPage";
 import Homepage from "./pages/Homepage";
 import Payment from "./pages/Payment";
+import OfficeProduct from "./pages/OfficeProduct";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
       <Route path="/" element={<NavbarLayout />}>
         <Route path="" element={<Homepage />} />
+        <Route path="/admin" element={<OfficeProduct />} />
         <Route path="profile" element={<ProfilePage />} />
         <Route path="cart" element={<Cartpage />} />
       </Route>
