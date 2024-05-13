@@ -11,7 +11,8 @@ import NavbarLayout from "./pages/NavbarLayout";
 import ProfilePage from "./pages/ProfilePage";
 import Cartpage from "./pages/CartPage";
 import LoginPage from "./pages/LoginPage";
-import HomePage from "./pages/Homepage";
+import Homepage from "./pages/Homepage";
+import Payment from "./pages/Payment";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -22,6 +23,7 @@ const router = createBrowserRouter(
         <Route path="cart" element={<Cartpage />} />
       </Route>
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/payment" element={<Payment />} />
     </>
   )
 );
