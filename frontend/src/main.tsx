@@ -14,6 +14,7 @@ import LoginPage from "./pages/LoginPage";
 import Homepage from "./pages/Homepage";
 import Payment from "./pages/Payment";
 import OfficeProduct from "./pages/OfficeProduct";
+import OfficeNewProduct from "./pages/OfficeNewProduct";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -21,6 +22,7 @@ const router = createBrowserRouter(
       <Route path="/" element={<NavbarLayout />}>
         <Route path="" element={<Homepage />} />
         <Route path="/admin" element={<OfficeProduct />} />
+        <Route path="/add-product" element={<OfficeNewProduct />} />
         <Route path="profile" element={<ProfilePage />} />
         <Route path="cart" element={<Cartpage />} />
       </Route>
