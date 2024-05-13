@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
+import { useCartStore } from "@/lib/store/cartStore";
 
 const components: { title: string; href: string; description: string }[] = [
   {
@@ -51,15 +52,17 @@ const components: { title: string; href: string; description: string }[] = [
 ];
 
 const Navbar = () => {
+  const { toggleCart } = useCartStore();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const actualUrl = window.location.href;
 
   useEffect(() => {
     const token = Cookies.get("authToken");
     setIsLoggedIn(!!token);
-  }, []);
+  }, [actualUrl]);
 
   return (
-    <>
+    <div className="fixed w-screen bg-background">
       <div className="flex justify-between border border-l-shadow shadow-sm">
         <div>
           <NavigationMenu>
@@ -131,7 +134,7 @@ const Navbar = () => {
           </NavigationMenu>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
