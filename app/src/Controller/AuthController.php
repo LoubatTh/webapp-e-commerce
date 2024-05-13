@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Cart;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
@@ -42,6 +43,10 @@ class AuthController extends AbstractController
             ], 400);
         }
 
+        $cart = new Cart();
+        $cart->setPrice(0);
+        $entityManager->persist($cart);
+
         $user = new User();
         $user->setUsername($data['username']);
         $user->setPassword($passwordHasher->hashPassword($user, $data['password']));
@@ -49,6 +54,7 @@ class AuthController extends AbstractController
         $user->setFirstname($data['firstname']);
         $user->setLastname($data['lastname']);
         $user->setRoles(["ROLE_USER"]);
+        $user->setCart($cart);
 
         $entityManager->persist($user);
         $entityManager->flush();

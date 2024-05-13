@@ -24,6 +24,9 @@ class Cart
     #[ORM\ManyToMany(targetEntity: Product::class)]
     private Collection $products;
 
+    #[ORM\OneToOne(mappedBy: 'cart', cascade: ['persist', 'remove'])]
+    private ?User $customer = null;
+
     public function __construct()
     {
         $this->products = new ArrayCollection();
@@ -73,6 +76,28 @@ class Cart
     public function removeProduct(Product $product): static
     {
         $this->products->removeElement($product);
+
+        return $this;
+    }
+
+    public function getCustomer(): ?User
+    {
+        return $this->customer;
+    }
+
+    public function setCustomer(?User $customer): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($customer === null && $this->customer !== null) {
+            $this->customer->setCart(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($customer !== null && $customer->getCart() !== $this) {
+            $customer->setCart($this);
+        }
+
+        $this->customer = $customer;
 
         return $this;
     }
