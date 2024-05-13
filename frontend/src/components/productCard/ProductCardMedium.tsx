@@ -1,11 +1,35 @@
 import { useCartStore } from "@/lib/store/cartStore";
 import { Button } from "../ui/button";
 import { Product } from "@/types/product.type";
+import { fetchApiPrivate } from "@/lib/apiPrivate";
+import { useNavigate } from "react-router-dom";
 
-type ProductCardMediumProps = { product: Product };
+type ProductCardMediumProps = {
+  product: Product;
+  onDelete: () => void;
+  admin?: boolean;
+};
 
-const ProductCardMedium = ({ product }: ProductCardMediumProps) => {
+const deleteProductApi = async (id: string) => {
+  const response = await fetchApiPrivate("DELETE", `products/${id}`);
+  return response;
+};
+
+const ProductCardMedium = ({
+  product,
+  onDelete,
+  admin,
+}: ProductCardMediumProps) => {
+  const navigate = useNavigate();
   const { addItem } = useCartStore();
+
+  const deleteProduct = async () => {
+    const response = await deleteProductApi(product.id);
+    if (response.status === 200) {
+      onDelete();
+      navigate("/admin");
+    }
+  };
 
   const addToCartHandler = () => {
     addItem(product);
@@ -29,9 +53,19 @@ const ProductCardMedium = ({ product }: ProductCardMediumProps) => {
           {product.description}
         </div>
       </div>
-      <Button className="rounded-xl" onClick={addToCartHandler}>
-        Add to Cart
-      </Button>
+      {admin ? (
+        <Button
+          className="rounded-xl"
+          variant="destructive"
+          onClick={deleteProduct}
+        >
+          Delete Product
+        </Button>
+      ) : (
+        <Button className="rounded-xl" onClick={addToCartHandler}>
+          Add to Cart
+        </Button>
+      )}
     </div>
   );
 };

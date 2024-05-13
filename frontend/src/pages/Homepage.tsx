@@ -1,11 +1,28 @@
-import { products } from "@/lib/DUMMY-DATA/products";
 import ProductCardMedium from "@/components/productCard/ProductCardMedium";
 import { useCartStore } from "@/lib/store/cartStore";
 import { SideCart } from "@/components/cart/SideCart";
+import { useEffect, useState } from "react";
+import { Product } from "@/types/product.type";
+import { fetchApiPrivate } from "@/lib/apiPrivate";
+
+const getAllProducts = async () => {
+  const response = await fetchApiPrivate("GET", "products");
+  return response;
+};
 
 const Homepage = () => {
   const { items } = useCartStore();
   const isEmpty: boolean = items.length === 0;
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const response = await getAllProducts();
+      const data: Product[] = response.data as Product[];
+      setProducts(data);
+    };
+    fetchProducts();
+  }, []);
 
   return (
     <div className="flex justify-between">

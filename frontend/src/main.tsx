@@ -11,17 +11,23 @@ import NavbarLayout from "./pages/NavbarLayout";
 import ProfilePage from "./pages/ProfilePage";
 import Cartpage from "./pages/CartPage";
 import LoginPage from "./pages/LoginPage";
-import HomePage from "./pages/Homepage";
+import Homepage from "./pages/Homepage";
+import Payment from "./pages/Payment";
+import OfficeProduct from "./pages/OfficeProduct";
+import OfficeNewProduct from "./pages/OfficeNewProduct";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
       <Route path="/" element={<NavbarLayout />}>
         <Route path="" element={<Homepage />} />
+        <Route path="/admin" element={<OfficeProduct />} />
+        <Route path="/add-product" element={<OfficeNewProduct />} />
         <Route path="profile" element={<ProfilePage />} />
         <Route path="cart" element={<Cartpage />} />
       </Route>
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/payment" element={<Payment />} />
     </>
   )
 );

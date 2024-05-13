@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const passwordRegex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*\W)/;
+const passwordRegex = /^(?=.*[A-Z])(?=.*[0-9])/;
 export const registerSchema = z.object({
   username: z
     .string()
@@ -9,9 +9,6 @@ export const registerSchema = z.object({
     })
     .max(50, {
       message: "Username is too long",
-    })
-    .nonempty({
-      message: "Username is required",
     }),
   password: z
     .string()
@@ -23,7 +20,7 @@ export const registerSchema = z.object({
     })
     .regex(passwordRegex, {
       message:
-        "Password must contain at least one uppercase letter, one number, and one special character",
+        "Password must contain at least one uppercase letter and one number",
     }),
   email: z.string().email({
     message: "Invalid email",
