@@ -3,6 +3,7 @@ import { Button } from "../ui/button";
 import { Product } from "@/types/product.type";
 import { fetchApiPrivate } from "@/lib/apiPrivate";
 import { useNavigate } from "react-router-dom";
+import { isAuthenticated } from "@/lib/auth/checkUser";
 
 type ProductCardMediumProps = {
   product: Product;
@@ -67,8 +68,12 @@ const ProductCardMedium = ({
         >
           Delete Product
         </Button>
-      ) : (
+      ) : isAuthenticated() ? (
         <Button className="rounded-xl" onClick={addToCartHandler}>
+          Add to Cart
+        </Button>
+      ) : (
+        <Button className="rounded-xl" onClick={() => navigate("/login")}>
           Add to Cart
         </Button>
       )}

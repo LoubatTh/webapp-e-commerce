@@ -9,7 +9,23 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { isAuthenticated } from "@/lib/auth/checkUser";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 const AddressSelection = () => {
+  const navigate = useNavigate();
+  const checkUser = () => {
+    if (!isAuthenticated()) {
+      console.log("User not authenticated");
+      navigate("/login");
+    }
+  };
+
+  useEffect(() => {
+    checkUser();
+  });
+
   return (
     <div className="flex flex-col gap-5 p-5 w-64 mx-auto justify-center">
       <Dialog>
