@@ -15,6 +15,11 @@ const deleteProductApi = async (id: string) => {
   return response;
 };
 
+const addItemToCart = async (productId: string) => {
+  const response = await fetchApiPrivate("POST", `carts/${productId}`);
+  return response;
+};
+
 const ProductCardMedium = ({
   product,
   onDelete,
@@ -33,6 +38,7 @@ const ProductCardMedium = ({
 
   const addToCartHandler = () => {
     addItem(product);
+    addItemToCart(product.id);
   };
 
   return (

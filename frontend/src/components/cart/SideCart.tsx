@@ -3,11 +3,18 @@ import ProductCardSmall from "../productCard/ProductCardSmall";
 import { ScrollArea } from "../ui/scroll-area";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { fetchApiPrivate } from "@/lib/apiPrivate";
+
+const fetchCart = async () => {
+  const response = await fetchApiPrivate("GET", "carts");
+  console.log(response);
+};
 
 export const SideCart = () => {
-  const { items, clearCart } = useCartStore();
   const navigate = useNavigate();
+  const { items, clearCart } = useCartStore();
   const [total, setTotal] = useState(0);
+
   const totalCart = () => {
     let total = 0;
     items.forEach((item) => {
@@ -15,6 +22,12 @@ export const SideCart = () => {
     });
     setTotal(total);
   };
+
+  const purchasHandler = () => {
+    // fetchCart();
+    navigate("/address");
+  };
+
   useEffect(() => {
     totalCart();
   }, [items]);
@@ -36,9 +49,7 @@ export const SideCart = () => {
       <div className="flex flex-col justify-center items-center w-72 fixed border-l border-t shadow-border shadow-md right-0 bottom-0 pb-3 bg-background">
         <div>Total: {total}€</div>
         <button
-          onClick={() => {
-            navigate("/payment");
-          }}
+          onClick={() => purchasHandler()}
           className="w-2/3 bg-primary text-white py-2"
         >
           Purchase

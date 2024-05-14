@@ -1,13 +1,36 @@
 import { CartItem } from "@/types/cart.type";
 import { Button } from "../ui/button";
 import { useCartStore } from "@/lib/store/cartStore";
+import { fetchApiPrivate } from "@/lib/apiPrivate";
 
 type ProductCardSmallProps = {
   product: CartItem;
 };
 
+const addItemToCart = async (productId: string) => {
+  const response = await fetchApiPrivate("POST", `carts/${productId}`);
+  console.log(response);
+  return response;
+};
+
+const removeItemToCart = async (productId: string) => {
+  const response = await fetchApiPrivate("DELETE", `carts/${productId}`);
+  console.log(response);
+  return response;
+};
+
 const ProductCardSmall = ({ product }: ProductCardSmallProps) => {
   const { incrementQuantity, decrementQuantity } = useCartStore();
+
+  const addToCartHandler = () => {
+    incrementQuantity(product.id);
+    addItemToCart(product.id);
+  };
+
+  const removeFromCartHandler = () => {
+    decrementQuantity(product.id);
+    removeItemToCart(product.id);
+  };
 
   return (
     <div className="flex flex-col justify-between gap-2 bg-white border shadow-border shadow-md rounded-xl p-2 h-40">
@@ -25,14 +48,14 @@ const ProductCardSmall = ({ product }: ProductCardSmallProps) => {
         <div className="flex justify-between items-center w-2/5">
           <Button
             className="rounded-full w-8 h-8"
-            onClick={() => decrementQuantity(product.id)}
+            onClick={() => removeFromCartHandler()}
           >
             -
           </Button>
           <p>{product.quantity}</p>
           <Button
             className="rounded-full w-8 h-8"
-            onClick={() => incrementQuantity(product.id)}
+            onClick={() => addToCartHandler()}
           >
             +
           </Button>
