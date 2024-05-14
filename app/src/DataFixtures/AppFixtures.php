@@ -17,7 +17,7 @@ class AppFixtures extends Fixture
         $brands = array("Nike", "Adidas", "Lacoste", "Under Armor", "Calvin Klein", "Champion", "The North Face");
         $this->createBrands($manager, $brands);
 
-        $genders = array("Men", "Women", "Kid");
+        $genders = array("Men", "Women", "Kid", "Unisex");
         $this->createGenders($manager, $genders);
 
         $sizes = array("XS", "S", "M", "L", "XL", "XXL", "XXXL", "∞L");
