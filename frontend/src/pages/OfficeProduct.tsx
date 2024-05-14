@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { fetchApiPrivate } from "@/lib/apiPrivate";
 import { useEffect, useState } from "react";
 import { Product } from "@/types/product.type";
+import { isAuthenticated } from "@/lib/auth/checkUser";
 
 const getAllProducts = async () => {
   const response = await fetchApiPrivate("GET", "products");
@@ -20,13 +21,18 @@ const OfficeProduct = () => {
     );
   };
 
+  const fetchProducts = async () => {
+    const response = await getAllProducts();
+    const data: Product[] = response.data as Product[];
+    setProducts(data);
+  };
+
   useEffect(() => {
-    const fetchProducts = async () => {
-      const response = await getAllProducts();
-      const data: Product[] = response.data as Product[];
-      setProducts(data);
-    };
-    fetchProducts();
+    if (!isAuthenticated()) {
+      navigate("/login");
+    } else {
+      fetchProducts();
+    }
   }, []);
   return (
     <div className="flex flex-col p-5 gap-5">

@@ -9,58 +9,27 @@ import {
 } from "react-router-dom";
 import NavbarLayout from "./pages/NavbarLayout";
 import ProfilePage from "./pages/ProfilePage";
-import Cartpage from "./pages/CartPage";
 import LoginPage from "./pages/LoginPage";
 import Homepage from "./pages/Homepage";
 import Payment from "./pages/Payment";
 import OfficeProduct from "./pages/OfficeProduct";
 import OfficeNewProduct from "./pages/OfficeNewProduct";
 import AddressSelection from "./pages/AddressSelection";
-import Cookies from "js-cookie";
-
-const getAccessToken = () => {
-  return Cookies.get("authToken");
-};
-
-const isAuthenticated = () => {
-  return !!getAccessToken();
-};
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
       <Route path="/" element={<NavbarLayout />}>
         <Route path="" element={<Homepage />} />
-        <Route
-          path="admin"
-          element={isAuthenticated() ? <OfficeProduct /> : <Homepage />}
-        />
-        <Route
-          path="add-product"
-          element={isAuthenticated() ? <OfficeNewProduct /> : <Homepage />}
-        />
-        <Route
-          path="profile"
-          element={isAuthenticated() ? <ProfilePage /> : <Homepage />}
-        />
-        <Route
-          path="cart"
-          element={isAuthenticated() ? <Cartpage /> : <Homepage />}
-        />
-        <Route
-          path="address"
-          element={isAuthenticated() ? <AddressSelection /> : <Homepage />}
-        />
+        <Route path="admin" element={<OfficeProduct />} />
+        <Route path="add-product" element={<OfficeNewProduct />} />
+        <Route path="profile" element={<ProfilePage />} />
+        <Route path="cart" />
+        <Route path="address" element={<AddressSelection />} />
       </Route>
       <Route path="/login" element={<LoginPage />} />
-      <Route
-        path="/payment"
-        element={isAuthenticated() ? <Payment /> : <Homepage />}
-      />
-      <Route
-        path="/address"
-        element={isAuthenticated() ? <AddressSelection /> : <Homepage />}
-      />
+      <Route path="/payment" element={<Payment />} />
+      <Route path="/address" element={<AddressSelection />} />
     </>
   )
 );
