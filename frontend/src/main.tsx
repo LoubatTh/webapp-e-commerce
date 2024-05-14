@@ -15,6 +15,7 @@ import Homepage from "./pages/Homepage";
 import Payment from "./pages/Payment";
 import OfficeProduct from "./pages/OfficeProduct";
 import OfficeNewProduct from "./pages/OfficeNewProduct";
+import AddressSelection from "./pages/AddressSelection";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -28,6 +29,7 @@ const router = createBrowserRouter(
       </Route>
       <Route path="/login" element={<LoginPage />} />
       <Route path="/payment" element={<Payment />} />
+      <Route path="/address" element={<AddressSelection />} />
     </>
   )
 );
