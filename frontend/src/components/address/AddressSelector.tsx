@@ -18,7 +18,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 const getUserAddresses = async (): Promise<Address[]> => {
   const response = await fetchApiPrivate("GET", "user");
-  console.log(response);
   const data = response.data as User;
   const addresses: Address[] = data.address as Address[];
   return addresses;

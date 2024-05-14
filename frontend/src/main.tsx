@@ -57,6 +57,7 @@ const router = createBrowserRouter(
         path="/payment"
         element={isAuthenticated() ? <Payment /> : <Homepage />}
       />
+      <Route path="/address" element={isAuthenticated() ?<AddressSelection />}: <Homepage />} />
     </>
   )
 );
