@@ -60,6 +60,3 @@ const OfficeProduct = () => {
 };
 
 export default OfficeProduct;
-function UseEffect(arg0: () => void) {
-  throw new Error("Function not implemented.");
-}

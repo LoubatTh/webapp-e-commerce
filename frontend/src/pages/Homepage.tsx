@@ -3,10 +3,10 @@ import { useCartStore } from "@/lib/store/cartStore";
 import { SideCart } from "@/components/cart/SideCart";
 import { useEffect, useState } from "react";
 import { Product } from "@/types/product.type";
-import { fetchApiPrivate } from "@/lib/apiPrivate";
+import { fetchApi } from "@/lib/api";
 
 const getAllProducts = async () => {
-  const response = await fetchApiPrivate("GET", "products");
+  const response = await fetchApi("GET", "products");
   return response;
 };
 
@@ -15,12 +15,13 @@ const Homepage = () => {
   const isEmpty: boolean = items.length === 0;
   const [products, setProducts] = useState<Product[]>([]);
 
+  const fetchProducts = async () => {
+    const response = await getAllProducts();
+    const data: Product[] = response.data as Product[];
+    setProducts(data);
+  };
+
   useEffect(() => {
-    const fetchProducts = async () => {
-      const response = await getAllProducts();
-      const data: Product[] = response.data as Product[];
-      setProducts(data);
-    };
     fetchProducts();
   }, []);
 
@@ -35,7 +36,11 @@ const Homepage = () => {
           }
         >
           {products.map((product) => (
-            <ProductCardMedium key={product.id} product={product} />
+            <ProductCardMedium
+              key={product.id}
+              product={product}
+              onDelete={() => {}}
+            />
           ))}
         </div>
       </div>
