@@ -109,7 +109,7 @@ class CartController extends AbstractController
             $this->entityManager->flush();
         }
 
-        return new RedirectResponse($checkout_session->url, 303);
+        return new RedirectResponse($checkout_session->url, 200);
     }
 
     #[Route("/api/carts/{id}", methods: ["POST"])]

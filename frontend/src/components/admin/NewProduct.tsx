@@ -52,7 +52,6 @@ const NewProduct = () => {
       values.description,
       values.price
     );
-    console.log(ok);
     if (ok) {
       navigate("/admin");
     }
