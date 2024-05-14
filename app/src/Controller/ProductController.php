@@ -121,7 +121,7 @@ class ProductController extends AbstractController
         $this->entityManager->persist($product);
         $this->entityManager->flush();
 
-        return new JsonResponse(['error' => 'Not implemented'], 501);
+        return new JsonResponse($this->responseBuilder($product), 200);
     }
 
     #[Route('/api/products/{id}', methods: ['DELETE'])]
