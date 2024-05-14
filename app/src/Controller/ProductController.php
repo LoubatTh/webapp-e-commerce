@@ -18,7 +18,6 @@ use Symfony\Component\Routing\Attribute\Route;
 class ProductController extends AbstractController
 {
     private $entityManager;
-
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
@@ -97,7 +96,7 @@ class ProductController extends AbstractController
         }
 
         if (!isset($data["name"]) && !isset($data["photo"]) && !isset($data["price"]) && !isset($data["type"]) && !isset($data["size"]) && count($data["size"]) == 0 && !isset($data["gender"]) && !isset($data["color"]) && !isset($data["brand"])) {
-            return new JsonResponse(["error" => "Missing fields. Mandatory fields: name, phot, price, type, size, gender, color, brand"], 400);
+            return new JsonResponse(["error" => "Missing fields. Mandatory fields: name, photo, price, type, size, gender, color, brand"], 400);
         }
 
         $product = new Product();
@@ -122,7 +121,7 @@ class ProductController extends AbstractController
         $this->entityManager->persist($product);
         $this->entityManager->flush();
 
-        return new JsonResponse(['error' => 'Not implemented'], 501);
+        return new JsonResponse($this->responseBuilder($product), 200);
     }
 
     #[Route('/api/products/{id}', methods: ['DELETE'])]
@@ -164,7 +163,7 @@ class ProductController extends AbstractController
             }
         }
 
-        throw new EntityNotFoundException($size . ' is not a valid Size', 0);
+        throw new EntityNotFoundException($size . ' is not a valid Size', 401);
     }
 
     private function checkGender(string $gender): Gender
@@ -177,7 +176,7 @@ class ProductController extends AbstractController
             }
         }
 
-        throw new EntityNotFoundException($gender . ' is not a valid Gender', 0);
+        throw new EntityNotFoundException($gender . ' is not a valid Gender', 401);
     }
 
     private function checkColor(string $color): Color
@@ -190,7 +189,7 @@ class ProductController extends AbstractController
             }
         }
 
-        throw new EntityNotFoundException($color . ' is not a valid Color', 0);
+        throw new EntityNotFoundException($color . ' is not a valid Color', 401);
     }
 
     private function checkBrand(string $brand): Brand
@@ -203,7 +202,7 @@ class ProductController extends AbstractController
             }
         }
 
-        throw new EntityNotFoundException($brand . ' is not a valid Brand', 0);
+        throw new EntityNotFoundException($brand . ' is not a valid Brand', 401);
     }
 
     private function responseBuilder(Product $product): array
