@@ -95,7 +95,6 @@ class CartController extends AbstractController
         ]);
 
         if($checkout_session->payment_status == "paid") {
-
             $order = new Order();
             $order->setCustomer($this->getUser());
             $order->setAddress($address);

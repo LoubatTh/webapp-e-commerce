@@ -34,6 +34,9 @@ drop-schema: ## Drop db schema
 genereate-keypair: ## Generate Key pair to generate jwt tokens
 	docker exec -it backend php bin/console lexik:jwt:generate-keypair;
 
+frontend-install: ## Install Node modules in frontend container
+	docker exec -it frontend npm install;
+
 test: ## Run tests
 	docker stop test-db && \
 	docker rm test-db && \
