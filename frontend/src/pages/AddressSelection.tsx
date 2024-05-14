@@ -1,6 +1,5 @@
 import AddressForm from "@/components/address/AddressForm";
 import AddressSelector from "@/components/address/AddressSelector";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -29,8 +28,8 @@ const AddressSelection = () => {
   return (
     <div className="flex flex-col gap-5 p-5 w-64 mx-auto justify-center">
       <Dialog>
-        <DialogTrigger>
-          <Button className="w-full">+ Add a new address</Button>
+        <DialogTrigger className="bg-primary p-3 text-primary-foreground">
+          + Add a new address
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
