@@ -42,7 +42,7 @@ const getCarts = async () => {
 };
 
 const LoginForm = () => {
-  const { addItem } = useCartStore();
+  const { addItem, setCart } = useCartStore();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -59,9 +59,10 @@ const LoginForm = () => {
     if (response === "success") {
       const carts = await getCarts();
       const items = carts.data.products;
-      items.forEach((item) => {
-        addItem(item);
-      });
+      setCart(items);
+      // items.forEach((item) => {
+      //   addItem(item);
+      // });
       navigate("/");
     } else {
       toast({
