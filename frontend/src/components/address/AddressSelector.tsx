@@ -95,7 +95,7 @@ const AddressSelector = () => {
                             <div className="flex flex-col">
                               <div>{address.name}</div>
                               <div>
-                                {address.address} {address.additionnalAdress}
+                                {address.address} {address.additionnalAddress}
                               </div>
                               <div>
                                 {address.postalCode} {address.city}

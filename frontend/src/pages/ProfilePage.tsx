@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { fetchApiPrivate } from "@/lib/apiPrivate";
 import { useEffect, useState } from "react";
 import { useCartStore } from "@/lib/store/cartStore";
+import AddressUser from "@/components/address/AddressUser";
 
 const getUserApi = async () => {
   const response = await fetchApiPrivate("GET", "user");
@@ -39,7 +40,10 @@ const ProfilePage = () => {
         {isAdmin && (
           <Button onClick={() => navigate("/admin")}>Back office</Button>
         )}
-        <Button onClick={LogOut}>Logout</Button>
+        <AddressUser />
+        <Button variant="destructive" onClick={LogOut}>
+          Logout
+        </Button>
       </div>
     </div>
   );

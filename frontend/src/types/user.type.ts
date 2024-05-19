@@ -12,7 +12,7 @@ export type Address = {
   id: number;
   name: string;
   address: string;
-  additionnalAdress: string;
+  additionnalAddress: string;
   postalCode: string;
   city: string;
   country: string;

@@ -25,7 +25,7 @@ const addNewAddress = async (
   const response = await fetchApiPrivate("POST", "user/address", {
     name: name,
     address: address,
-    additionnalAdress: additionnalAdress,
+    additionnalAddress: additionnalAdress,
     postalCode: postalCode,
     city: city,
     country: country,
