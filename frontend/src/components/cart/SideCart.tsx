@@ -3,12 +3,6 @@ import ProductCardSmall from "../productCard/ProductCardSmall";
 import { ScrollArea } from "../ui/scroll-area";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { fetchApiPrivate } from "@/lib/apiPrivate";
-
-const fetchCart = async () => {
-  const response = await fetchApiPrivate("GET", "carts");
-  console.log(response);
-};
 
 export const SideCart = () => {
   const navigate = useNavigate();
