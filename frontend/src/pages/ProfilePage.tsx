@@ -31,11 +31,13 @@ const ProfilePage = () => {
   }, []);
 
   return (
-    <div>
-      {isAdmin && (
-        <Button onClick={() => navigate("/admin")}>Back office</Button>
-      )}
-      <Button onClick={LogOut}>Logout</Button>
+    <div className="p-4">
+      <div className="flex flex-col gap-3 w-32">
+        {isAdmin && (
+          <Button onClick={() => navigate("/admin")}>Back office</Button>
+        )}
+        <Button onClick={LogOut}>Logout</Button>
+      </div>
     </div>
   );
 };
