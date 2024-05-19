@@ -21,12 +21,11 @@ export async function fetchApi<T>(
     const response = await fetch(`/api/${endpoint}`, config);
     const data = await response.json();
     if (!response.ok) {
-      throw new Error(data.message || "Unknown API error");
+      return data;
     }
     return { data, status: response.status };
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    console.error("API call failed:", error.message);
     return {
       status: error.status || 500,
       error: error.message || "Unknown error occurred",
