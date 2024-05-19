@@ -39,7 +39,6 @@ class ProductController extends AbstractController
     #[Route('/api/products/{id}', methods: ['GET'])]
     public function getAllProducts(Request $request, int $id): JsonResponse
     {
-
         $product = $this->entityManager->getRepository(Product::class)->findOneBy(["id" => $id]);
 
         if (!$product) {

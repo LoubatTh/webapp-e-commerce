@@ -14,6 +14,7 @@ import {
   FormLabel,
 } from "../ui/form";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const getUserAddresses = async (): Promise<Address[]> => {
@@ -32,6 +33,7 @@ const postOrderAdress = async (addressId: number) => {
 
 const AddressSelector = () => {
   const [addresses, setAddresses] = useState<Address[]>([]);
+  const navigate = useNavigate();
 
   const FormSchema = z.object({
     type: z.string(),
@@ -52,9 +54,10 @@ const AddressSelector = () => {
     return response;
   };
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
     const idAddress = parseInt(data.type);
-    postAddress(idAddress);
+    const redirect = await postAddress(idAddress);
+    window.open(redirect.data, "_self");
   }
 
   useEffect(() => {
