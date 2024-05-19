@@ -16,6 +16,7 @@ import Cookies from "js-cookie";
 import { loginSchema } from "@/lib/form-validator/loginSchema";
 import { useNavigate } from "react-router-dom";
 import type { UserLoginData, UserLoginResponse } from "@/types/userLogin.type";
+import { useToast } from "../ui/use-toast";
 
 const login = async (username: string, password: string): Promise<unknown> => {
   const response = await fetchApi<UserLoginData>("POST", "login", {
@@ -23,19 +24,18 @@ const login = async (username: string, password: string): Promise<unknown> => {
     password,
   });
 
-  if (response.status !== 200) {
-    console.log(response.error);
-    throw new Error("An error occured");
+  if (response.status === 200) {
+    const data = response.data as UserLoginResponse;
+    const token = data.token;
+    Cookies.set("authToken", token);
+    return "success";
   }
-
-  const data = response.data as UserLoginResponse;
-  const token = data.token;
-  Cookies.set("authToken", token);
-  return true;
+  return response;
 };
 
 const LoginForm = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -46,9 +46,16 @@ const LoginForm = () => {
   });
 
   async function onSubmit(values: z.infer<typeof loginSchema>) {
-    const ok = await login(values.username, values.password);
-    if (ok) {
+    const response = await login(values.username, values.password);
+    if (response === "success") {
       navigate("/");
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Something went wrong",
+        description: response.message,
+        duration: 3000,
+      });
     }
   }
 

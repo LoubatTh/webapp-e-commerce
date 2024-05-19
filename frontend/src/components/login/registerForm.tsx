@@ -19,6 +19,7 @@ import type {
   UserRegistrationData,
   UserRegistrationResponse,
 } from "@/types/userRegistration.type";
+import { useToast } from "../ui/use-toast";
 
 const register = async (
   username: string,
@@ -35,19 +36,18 @@ const register = async (
     lastname,
   });
 
-  if (response.status !== 201) {
-    console.log(response.error);
-    throw new Error("An error occured");
+  if (response.status === 201) {
+    const data = response.data as UserRegistrationResponse;
+    const token = data.token;
+    Cookies.set("authToken", token);
+    return response;
   }
-
-  const data = response.data as UserRegistrationResponse;
-  const token = data.token;
-  Cookies.set("authToken", token);
-  return true;
+  return response;
 };
 
 const RegisterForm = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
@@ -61,15 +61,22 @@ const RegisterForm = () => {
   });
 
   async function onSubmit(values: z.infer<typeof registerSchema>) {
-    const ok = await register(
+    const response = await register(
       values.username,
       values.password,
       values.email,
       values.firstname,
       values.lastname
     );
-    if (ok) {
+    if (!response.error) {
       navigate("/");
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Something went wrong",
+        description: response.error,
+        duration: 3000,
+      });
     }
   }
 
