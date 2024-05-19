@@ -37,9 +37,11 @@ const ProductCardMedium = ({
     }
   };
 
-  const addToCartHandler = () => {
-    addItem(product);
-    addItemToCart(product.id);
+  const addToCartHandler = async () => {
+    const reponse = await addItemToCart(product.id);
+    if (reponse.status === 200) {
+      addItem(product);
+    }
   };
 
   return (

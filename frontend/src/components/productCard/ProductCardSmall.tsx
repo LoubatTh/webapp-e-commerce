@@ -9,27 +9,29 @@ type ProductCardSmallProps = {
 
 const addItemToCart = async (productId: string) => {
   const response = await fetchApiPrivate("POST", `carts/${productId}`);
-  console.log(response);
   return response;
 };
 
 const removeItemToCart = async (productId: string) => {
   const response = await fetchApiPrivate("DELETE", `carts/${productId}`);
-  console.log(response);
   return response;
 };
 
 const ProductCardSmall = ({ product }: ProductCardSmallProps) => {
   const { incrementQuantity, decrementQuantity } = useCartStore();
 
-  const addToCartHandler = () => {
-    incrementQuantity(product.id);
-    addItemToCart(product.id);
+  const addToCartHandler = async () => {
+    const response = await addItemToCart(product.id);
+    if (response.status === 200) {
+      incrementQuantity(product.id);
+    }
   };
 
-  const removeFromCartHandler = () => {
-    decrementQuantity(product.id);
-    removeItemToCart(product.id);
+  const removeFromCartHandler = async () => {
+    const response = await removeItemToCart(product.id);
+    if (response.status === 200) {
+      decrementQuantity(product.id);
+    }
   };
 
   return (
