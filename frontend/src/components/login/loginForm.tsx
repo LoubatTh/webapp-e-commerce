@@ -17,6 +17,8 @@ import { loginSchema } from "@/lib/form-validator/loginSchema";
 import { useNavigate } from "react-router-dom";
 import type { UserLoginData, UserLoginResponse } from "@/types/userLogin.type";
 import { useToast } from "../ui/use-toast";
+import { useCartStore } from "@/lib/store/cartStore";
+import { fetchApiPrivate } from "@/lib/apiPrivate";
 
 const login = async (username: string, password: string): Promise<unknown> => {
   const response = await fetchApi<UserLoginData>("POST", "login", {
@@ -33,7 +35,14 @@ const login = async (username: string, password: string): Promise<unknown> => {
   return response;
 };
 
+const getCarts = async () => {
+  const response = await fetchApiPrivate("GET", "carts");
+  console.log(response);
+  return response;
+};
+
 const LoginForm = () => {
+  const { addItem } = useCartStore();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -48,6 +57,11 @@ const LoginForm = () => {
   async function onSubmit(values: z.infer<typeof loginSchema>) {
     const response = await login(values.username, values.password);
     if (response === "success") {
+      const carts = await getCarts();
+      const items = carts.data.products;
+      items.forEach((item) => {
+        addItem(item);
+      });
       navigate("/");
     } else {
       toast({

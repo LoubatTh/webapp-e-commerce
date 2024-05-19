@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { fetchApiPrivate } from "@/lib/apiPrivate";
 import { useEffect, useState } from "react";
+import { useCartStore } from "@/lib/store/cartStore";
 
 const getUserApi = async () => {
   const response = await fetchApiPrivate("GET", "user");
@@ -10,11 +11,13 @@ const getUserApi = async () => {
 };
 
 const ProfilePage = () => {
+  const { clearCart } = useCartStore();
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
 
   const LogOut = () => {
     Cookies.remove("authToken");
+    clearCart();
     navigate("/");
   };
 
