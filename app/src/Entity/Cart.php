@@ -18,18 +18,19 @@ class Cart
     #[ORM\Column]
     private ?float $price = null;
 
-    /**
-     * @var Collection<int, Product>
-     */
-    #[ORM\ManyToMany(targetEntity: Product::class)]
-    private Collection $products;
-
     #[ORM\OneToOne(mappedBy: 'cart', cascade: ['persist', 'remove'])]
     private ?User $customer = null;
+
+    /**
+     * @var Collection<int, CartProduct>
+     */
+    #[ORM\OneToMany(targetEntity: CartProduct::class, mappedBy: 'cart', orphanRemoval: true)]
+    private Collection $Products;
 
     public function __construct()
     {
         $this->products = new ArrayCollection();
+        $this->Products = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -56,30 +57,6 @@ class Cart
         return $this;
     }
 
-    /**
-     * @return Collection<int, Product>
-     */
-    public function getProducts(): Collection
-    {
-        return $this->products;
-    }
-
-    public function addProduct(Product $product): static
-    {
-        if (!$this->products->contains($product)) {
-            $this->products->add($product);
-        }
-
-        return $this;
-    }
-
-    public function removeProduct(Product $product): static
-    {
-        $this->products->removeElement($product);
-
-        return $this;
-    }
-
     public function getCustomer(): ?User
     {
         return $this->customer;
@@ -98,6 +75,36 @@ class Cart
         }
 
         $this->customer = $customer;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CartProduct>
+     */
+    public function getProducts(): Collection
+    {
+        return $this->Products;
+    }
+
+    public function addProduct(CartProduct $product): static
+    {
+        if (!$this->Products->contains($product)) {
+            $this->Products->add($product);
+            $product->setCart($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProduct(CartProduct $product): static
+    {
+        if ($this->Products->removeElement($product)) {
+            // set the owning side to null (unless already changed)
+            if ($product->getCart() === $this) {
+                $product->setCart(null);
+            }
+        }
 
         return $this;
     }

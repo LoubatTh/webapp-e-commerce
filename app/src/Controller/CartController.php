@@ -3,12 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Address;
+use App\Entity\CartProduct;
 use App\Entity\Order;
+use App\Entity\OrderProduct;
 use App\Entity\Product;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -31,9 +32,10 @@ class CartController extends AbstractController
             "price" => $cart->getPrice(),
             "products" => [],
         ];
-        $products = $cart->getProducts();
+        $cartProducts = $cart->getProducts();
 
-        foreach ($products as $product) {
+        foreach ($cartProducts as $cartProduct) {
+            $product = $cartProduct->getProduct();
             $response["products"][] = [
                 "id" => $product->getId(),
                 "name" => $product->getName(),
@@ -44,6 +46,7 @@ class CartController extends AbstractController
                 "color" => $product->getColor()->getColor(),
                 "brand" => $product->getBrand()->getName(),
                 "description" => $product->getDescription(),
+                "quantity" => $cartProduct->getQuantity(),
             ];
         }
 
@@ -94,17 +97,21 @@ class CartController extends AbstractController
             'cancel_url' => $domain . "/",
         ]);
 
-        if($checkout_session->payment_status == "paid") {
+        if ($checkout_session->payment_status == "paid") {
             $order = new Order();
             $order->setCustomer($this->getUser());
             $order->setAddress($address);
             $order->setPrice($cart->getPrice());
-            foreach ($cart->getProducts() as $product) {
+            foreach ($cart->getProducts() as $cartProduct) {
+                $product = new OrderProduct();
+                $product->setOrder($order);
+                $product->setProduct($cartProduct->getProduct());
+                $product->setQuantity($cartProduct->getQuantity());
                 $order->addProduct($product);
             }
             $order->setCreatedAt(new \DateTime());
             $this->entityManager->persist($order);
-            
+
             $this->clearCart();
             $this->entityManager->flush();
         }
@@ -123,7 +130,18 @@ class CartController extends AbstractController
             return new JsonResponse(["error" => "Product not found"], 404);
         }
 
-        $cart->addProduct($product);
+        $cartProduct = $this->entityManager->getRepository(CartProduct::class)->findOneBy(['product' => $product]);
+
+        if ($cartProduct) {
+            $cartProduct->setQuantity($cartProduct->getQuantity() + 1);
+        } else {
+            $newCartProduct = new CartProduct;
+            $newCartProduct->setCart($cart);
+            $newCartProduct->setProduct($product);
+            $newCartProduct->setQuantity(1);
+            $cart->addProduct($newCartProduct);
+            $this->entityManager->persist($newCartProduct);
+        }
         $cart->setPrice($cart->getPrice() + $product->getPrice());
         $this->entityManager->flush();
 
@@ -141,8 +159,15 @@ class CartController extends AbstractController
             return new JsonResponse(["error" => "Product not found"], 404);
         }
 
-        $cart->removeProduct($product);
-        $cart->setPrice($cart->getPrice() - $product->getPrice());
+        $cartProduct = $this->entityManager->getRepository(CartProduct::class)->findOneBy(['product' => $product]);
+
+        if ($cartProduct && $cartProduct->getQuantity() > 1) {
+            $cartProduct->setQuantity($cartProduct->getQuantity() - 1);
+            $cart->setPrice($cart->getPrice() - $product->getPrice());
+        } else if ($cartProduct) {
+            $cart->removeProduct($cartProduct);
+            $cart->setPrice($cart->getPrice() - $product->getPrice());
+        }
         $this->entityManager->flush();
 
         return new JsonResponse(["message" => "Product removed from Cart"], 200);
