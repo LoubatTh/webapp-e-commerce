@@ -1,7 +1,6 @@
 import { addressSchema } from "@/lib/form-validator/addressSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import {
   Form,
@@ -35,8 +34,6 @@ const addNewAddress = async (
 };
 
 const AddressForm = () => {
-  const navigate = useNavigate();
-
   const form = useForm<z.infer<typeof addressSchema>>({
     resolver: zodResolver(addressSchema),
     defaultValues: {
@@ -59,7 +56,7 @@ const AddressForm = () => {
       values.country
     );
     if (ok) {
-      navigate("/address");
+      location.reload();
     }
   }
   return (
