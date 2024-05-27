@@ -10,16 +10,19 @@ use App\Entity\Product;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 
 class CartController extends AbstractController
 {
     private $entityManager;
+    private $logger;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger)
     {
         $this->entityManager = $entityManager;
+        $this->logger = $logger; 
     }
 
     #[Route('/api/carts', methods: ['GET'])]
@@ -74,6 +77,22 @@ class CartController extends AbstractController
             return new JsonResponse(["error" => "This is not associated to this user"], 401);
         }
 
+        $order = new Order();
+        $order->setCustomer($this->getUser());
+        $order->setAddress($address);
+        $order->setPrice($cart->getPrice());
+        foreach ($cart->getProducts() as $cartProduct) {
+            $product = new OrderProduct();
+            $product->setOrder($order);
+            $product->setProduct($cartProduct->getProduct());
+            $product->setQuantity($cartProduct->getQuantity());
+            $order->addProduct($product);
+            $this->entityManager->persist($product);
+        }
+        $order->setCreatedAt(new \DateTime());
+        $order->setPaid(false);
+        $this->entityManager->persist($order);
+
         $stripeSecret = $_ENV["STRIPE_SECRET_KEY"];
         $domain = $_ENV["DOMAIN"];
 
@@ -92,29 +111,14 @@ class CartController extends AbstractController
                 ]
             ],
             'mode' => 'payment',
-            // TODO: Adjust payment url redirect
             'success_url' => $domain . "/",
             'cancel_url' => $domain . "/",
+            'client_reference_id' => $order->getId()
         ]);
 
-        if ($checkout_session->payment_status == "paid") {
-            $order = new Order();
-            $order->setCustomer($this->getUser());
-            $order->setAddress($address);
-            $order->setPrice($cart->getPrice());
-            foreach ($cart->getProducts() as $cartProduct) {
-                $product = new OrderProduct();
-                $product->setOrder($order);
-                $product->setProduct($cartProduct->getProduct());
-                $product->setQuantity($cartProduct->getQuantity());
-                $order->addProduct($product);
-            }
-            $order->setCreatedAt(new \DateTime());
-            $this->entityManager->persist($order);
 
-            $this->clearCart();
-            $this->entityManager->flush();
-        }
+        // $this->clearCart();
+        $this->entityManager->flush();
 
         return new JsonResponse($checkout_session->url, 200);
     }

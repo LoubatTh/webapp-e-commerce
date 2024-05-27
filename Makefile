@@ -37,6 +37,10 @@ genereate-keypair: ## Generate Key pair to generate jwt tokens
 frontend-install: ## Install Node modules in frontend container
 	docker exec -it frontend npm install;
 
+checkout:
+	docker exec -it stripe stripe trigger checkout.session.completed;
+
+
 test: ## Run tests
 	docker stop test-db && \
 	docker rm test-db && \

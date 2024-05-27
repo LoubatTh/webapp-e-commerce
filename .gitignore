@@ -2,3 +2,4 @@
 vendor
 .env
 .vscode
+package-lock.json

@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Order
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: "SEQUENCE")]
     #[ORM\Column]
     private ?int $id = null;
 
@@ -36,6 +36,9 @@ class Order
      */
     #[ORM\OneToMany(targetEntity: OrderProduct::class, mappedBy: 'orderCustomer', orphanRemoval: true)]
     private Collection $products;
+
+    #[ORM\Column]
+    private ?bool $paid = null;
 
     public function __construct()
     {
@@ -128,6 +131,18 @@ class Order
                 $product->setOrder(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isPaid(): ?bool
+    {
+        return $this->paid;
+    }
+
+    public function setPaid(bool $paid): static
+    {
+        $this->paid = $paid;
 
         return $this;
     }

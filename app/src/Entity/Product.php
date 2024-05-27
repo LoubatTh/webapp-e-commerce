@@ -49,12 +49,6 @@ class Product
     #[ORM\JoinColumn(nullable: false)]
     private ?Type $Type = null;
 
-    /**
-     * @var Collection<int, OrderProduct>
-     */
-    #[ORM\OneToMany(targetEntity: OrderProduct::class, mappedBy: 'product')]
-    private Collection $products;
-
     public function __construct()
     {
         $this->Size = new ArrayCollection();
@@ -189,36 +183,6 @@ class Product
     public function setType(?Type $Type): static
     {
         $this->Type = $Type;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, OrderProduct>
-     */
-    public function getProducts(): Collection
-    {
-        return $this->products;
-    }
-
-    public function addProduct(OrderProduct $product): static
-    {
-        if (!$this->products->contains($product)) {
-            $this->products->add($product);
-            $product->setProduct($this);
-        }
-
-        return $this;
-    }
-
-    public function removeProduct(OrderProduct $product): static
-    {
-        if ($this->products->removeElement($product)) {
-            // set the owning side to null (unless already changed)
-            if ($product->getProduct() === $this) {
-                $product->setProduct(null);
-            }
-        }
 
         return $this;
     }

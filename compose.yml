@@ -58,9 +58,24 @@ services:
     networks:
       - network
 
+  stripe:
+    container_name: stripe
+    build:
+      context: ./app/stripe
+      dockerfile: Dockerfile
+    depends_on:
+      - backend
+    volumes:
+      - stripe-gpg://root/.gnupg/
+      - stripe-pass://root/.password-store/
+    networks:
+      - network
+
 networks:
   network:
     driver: bridge
 
 volumes:
   database_data:
+  stripe-gpg:
+  stripe-pass:

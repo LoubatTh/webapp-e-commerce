@@ -1,6 +1,6 @@
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Label } from "../ui/label";
-import { fetchApiPrivate } from "@/lib/apiPrivate";
+import { fetchApiPrivate, fetchApiPrivateRedirect } from "@/lib/apiPrivate";
 import { useEffect, useState } from "react";
 import { Address, User } from "@/types/user.type";
 import { z } from "zod";
@@ -57,7 +57,7 @@ const AddressSelector = () => {
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     const idAddress = parseInt(data.type);
     const redirect = await postAddress(idAddress);
-    window.open(redirect.data, "_self");
+    window.location.href = redirect.data;
   }
 
   useEffect(() => {
